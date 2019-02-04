@@ -1,0 +1,12 @@
+/* デフォルトのpaddingとmarginを解除するためのおまじない！！ */
+*{
+  padding: 0;
+  margin: 0;
+}
+
+canvas{
+  background-color: "#eee";
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+}
