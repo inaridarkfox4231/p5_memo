@@ -3,7 +3,7 @@
 let proj;
 let dim3Vecs = [];
 let projVecs = [];
-let startPos = [0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7];
+let startPos = [0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7]; // 辺を引くための準備
 let endPos = [1, 3, 0, 2, 4, 5, 6, 7, 5, 7, 4, 6];
 
 function setup(){
@@ -34,12 +34,12 @@ function setup(){
   regist(0, 100, -100);
   regist(0, -100, 100);
   regist(0, -100, -100);
-  proj = new projection(2, 5, 3); // 立体感がないからよくわかんないね。遠くの点を薄くするとかしないと無理
+  proj = new projection(-4, -3, -5); // 立体感がないからよくわかんないね。遠くの点を薄くするとかしないと無理
   dim3Vecs.forEach(function(v){
     projVecs.push(createVector(0, 0)); // dummy
   })
   calcProjVecs();
-  noLoop();
+  //noLoop();
 }
 function draw(){
   background(220);
@@ -90,6 +90,10 @@ function innerProd(v1, v2){
 
 function copyVec(v){
   return new dim3Vector(v.x, v.y, v.z);
+}
+
+function outerProd(v1, v2){
+  return new dim3Vector(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
 }
 
 function regist(x, y, z){
@@ -150,18 +154,21 @@ class projection{
     this.zAxis = divVec(v, v.norm());
     let xPreAxis;
     let yPreAxis;
-    if(this.zAxis.x !== 0){
+    if(this.zAxis.y !== 0){
       xPreAxis = new dim3Vector(-this.zAxis.y, this.zAxis.x, 0);
-      yPreAxis = new dim3Vector(-this.zAxis.x * this.zAxis.z, -this.zAxis.y * this.zAxis.z, 1 - this.zAxis.z * this.zAxis.z);
+      yPreAxis = outerProd(this.zAxis, xPreAxis); // 外積
     }else{
-      xPreAxis = new dim3Vector(0, this.zAxis.y, -this.zAxis.x);
-      yPreAxis = new dim3Vector(1 - this.zAxis.z * this.zAxis.z, this.zAxis.x * this.zAxis.z, this.zAxis.y * this.zAxis.z);
+      xPreAxis = new dim3Vector(this.zAxis.z, 0, -this.zAxis.x);
+      yPreAxis = outerProd(this.zAxis, xPreAxis); // 外積
     }
     this.xAxis = divVec(xPreAxis, xPreAxis.norm());
     this.yAxis = divVec(yPreAxis, yPreAxis.norm());
     this.xVec = copyVec(this.xAxis);
     this.yVec = copyVec(this.yAxis);
     this.angle = 0; // x, y のAxisの回転
+    console.log(this.xAxis);
+    console.log(this.yAxis);
+    console.log(this.zAxis);
   }
   reset(){
     this.xAxis = copyVec(this.xVec);
@@ -185,3 +192,7 @@ function keyTyped(){
   else if(key === 'i'){ proj.increaseAngle(); proj.rotate(); calcProjVecs(); }
   else if(key === 'd'){ proj.decreaseAngle(); proj.rotate(); calcProjVecs(); }
 }
+
+// 点の配列とか入力できるようにしたい
+// 線引くやつも簡単にできるようにしたい
+// あと、できれば面に色つけたり・・・あと軸変更とかできるように！

@@ -1,29 +1,42 @@
 // SandyBackgroundのテスト
-// FALworksさんのtrigonomatricfunction書いてみたい
-// うねうね波がうねるやつ
-// ・・・やめましょう・・
 'use strict';
-const IDEAL_FRAME_RATE = 60;
-let currentBackground;
+//const IDEAL_FRAME_RATE = 60;
+//let currentBackground;
+let sandyBG;
 let black, gray;
 
 function setup(){
-  createCanvas(640, 640);
-  textFont(loadFont("Georgia", 14, true));
-  frameRate(IDEAL_FRAME_RATE);
+  createCanvas(100, 100);
+  //textFont(loadFont("Georgia", 14, true));
+  //frameRate(60);
   //colorMode(HSB, 360, 100, 100, 100);
   //background(0, 0, 100);
-  currentBackground = new SandyBackground();
+  //currentBackground = new SandyBackground();
+  sandyBG = createGraphics(100, 100);
   black = color(0, 0, 15);
   gray = color(0, 0, 70);
+  setSandyBG();
   noLoop();
 }
 
 function draw(){
   //currentBackground.display();
-  background(190, 190, 230);
+  //drawSandy();
+  image(sandyBG, 0, 0);
+  //background(190, 190, 230);
 }
 
+function setSandyBG(){
+  sandyBG.loadPixels();
+  for(let x = 0; x < 200; x++){
+    for(let y = 0; y < 200; y++){
+      sandyBG.pixels[x + y * 200] = Math.floor(random(235, 255));
+    }
+  }
+  sandyBG.updatePixels();
+}
+
+/*
 class AbstractBackground{
   AbstractBackground(){}
   display(){}
@@ -49,4 +62,4 @@ class SandyBackground extends AbstractBackground{
   display(){
     image(this.graphics, 0, 0);
   }
-}
+}*/
